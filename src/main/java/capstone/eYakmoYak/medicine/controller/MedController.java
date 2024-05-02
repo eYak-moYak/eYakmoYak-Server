@@ -2,6 +2,7 @@ package capstone.eYakmoYak.medicine.controller;
 
 import capstone.eYakmoYak.auth.domain.User;
 import capstone.eYakmoYak.medicine.dto.AddMedReq;
+import capstone.eYakmoYak.medicine.dto.AddPreReq;
 import capstone.eYakmoYak.medicine.service.MedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class MedController {
     }
 
     /**
-     * 개별약등록
+     * 개별약 등록
      */
     @PostMapping("/add/medicine")
     public ResponseEntity<?> addMedicine(@RequestHeader("access") String token, @RequestBody AddMedReq request){
@@ -32,5 +33,16 @@ public class MedController {
         medService.addMedicine(user, request);
 
         return ResponseEntity.ok("Medicine created successfully");
+    }
+
+    /**
+     * 처방약 등록
+     */
+    @PostMapping("/add/prescription")
+    public ResponseEntity<?> addPrescription(@RequestHeader("access") String token, @RequestBody AddPreReq request){
+        User user = medService.getUser(token);
+        medService.addPrescription(user, request);
+
+        return ResponseEntity.ok("Prescription and medicines created successfully");
     }
 }

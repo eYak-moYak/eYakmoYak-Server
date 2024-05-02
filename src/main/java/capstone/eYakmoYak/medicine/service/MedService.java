@@ -6,6 +6,8 @@ import capstone.eYakmoYak.auth.repository.UserRepository;
 import capstone.eYakmoYak.medicine.domain.Medicine;
 import capstone.eYakmoYak.medicine.domain.Prescription;
 import capstone.eYakmoYak.medicine.dto.AddMedReq;
+import capstone.eYakmoYak.medicine.dto.AddPreMedReq;
+import capstone.eYakmoYak.medicine.dto.AddPreReq;
 import capstone.eYakmoYak.medicine.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +58,9 @@ public class MedService {
         }
     }
 
+    /**
+     * 토큰값으로 유저정보 가져오기
+     */
     public User getUser(String token){
         String username = jwtUtil.getUsername(token);
         User user = userRepository.findByUsername(username);
@@ -81,6 +86,30 @@ public class MedService {
                 .build();
 
         prescription.addMedicine(medicine);
+
+        prescriptionRepository.save(prescription);
+    }
+
+    public void addPrescription(User user, AddPreReq request){
+        Prescription prescription  = Prescription.builder()
+                .user(user)
+                .pre_name(request.getPre_name())
+                .hospital(request.getHospital())
+                .pharmacy(request.getPharmacy())
+                .pre_date(request.getPre_date())
+                .start_date(request.getStart_date())
+                .end_date(request.getEnd_date())
+                .build();
+
+        user.addPrescription(prescription);
+
+        for(AddPreMedReq medicineRequest : request.getMedicines()){
+            Medicine medicine = new Medicine();
+            medicine.setName(medicineRequest.getName());
+            medicine.setDose_time(medicineRequest.getDose_time());
+            medicine.setMeal_time(medicine.getMeal_time());
+            prescription.addMedicine(medicine);
+        }
 
         prescriptionRepository.save(prescription);
     }
