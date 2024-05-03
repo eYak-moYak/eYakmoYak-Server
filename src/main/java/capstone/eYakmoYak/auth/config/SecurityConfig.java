@@ -88,7 +88,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
                         .requestMatchers("my").hasRole("USER")
-                        .requestMatchers("/med/search").permitAll()
+                        .requestMatchers("/get/medicineInfo").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated());
 

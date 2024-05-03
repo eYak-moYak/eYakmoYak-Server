@@ -21,7 +21,7 @@ public class MedController {
     /**
      * 약품상세정보 조회
      */
-    @GetMapping("/get/medicine")
+    @GetMapping("/get/medicineInfo")
     public ResponseEntity<?> getMedInfo(@RequestParam(value = "itemName", required = false) String itemName){
         String medInfo = medService.getMedInfo(itemName);
         return ResponseEntity.ok(medInfo);
