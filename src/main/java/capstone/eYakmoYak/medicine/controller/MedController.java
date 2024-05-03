@@ -3,10 +3,13 @@ package capstone.eYakmoYak.medicine.controller;
 import capstone.eYakmoYak.auth.domain.User;
 import capstone.eYakmoYak.medicine.dto.AddMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreReq;
+import capstone.eYakmoYak.medicine.dto.GetMedRes;
 import capstone.eYakmoYak.medicine.service.MedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
@@ -18,8 +21,8 @@ public class MedController {
     /**
      * 약품상세정보 조회
      */
-    @GetMapping("/search/medicine")
-    public ResponseEntity<?> searchMedInfo(@RequestParam(value = "itemName", required = false) String itemName){
+    @GetMapping("/get/medicine")
+    public ResponseEntity<?> getMedInfo(@RequestParam(value = "itemName", required = false) String itemName){
         String medInfo = medService.getMedInfo(itemName);
         return ResponseEntity.ok(medInfo);
     }
@@ -44,5 +47,16 @@ public class MedController {
         medService.addPrescription(user, request);
 
         return ResponseEntity.ok("Prescription and medicines created successfully");
+    }
+
+    /**
+     * 병용금기 페이지 - 복용중인 약 목록
+     */
+    @GetMapping("/get/medicines")
+    public List<GetMedRes> getMedicines(@RequestHeader("access") String token){
+        User user = medService.getUser(token);
+        Long userId = user.getId();
+
+        return medService.getMedicineList(userId);
     }
 }

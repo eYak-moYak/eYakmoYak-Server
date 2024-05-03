@@ -8,6 +8,7 @@ import capstone.eYakmoYak.medicine.domain.Prescription;
 import capstone.eYakmoYak.medicine.dto.AddMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreReq;
+import capstone.eYakmoYak.medicine.dto.GetMedRes;
 import capstone.eYakmoYak.medicine.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -113,4 +116,26 @@ public class MedService {
 
         prescriptionRepository.save(prescription);
     }
+
+    public List<GetMedRes> getMedicineList(Long userId) {
+        // 유저의 처방전 목록 가져오기
+        List<Prescription> prescriptions = prescriptionRepository.findByUser_Id(userId);
+
+        // 모든 처방전의 약 목록 수집
+        List<GetMedRes> medList = new ArrayList<>();
+
+        for (Prescription prescription : prescriptions) {
+            for (Medicine medicine : prescription.getMedicines()) {
+                GetMedRes med = GetMedRes.builder()
+                        .name(medicine.getName())
+                        .start_date(prescription.getStart_date())
+                        .end_date(prescription.getEnd_date())
+                        .build();
+                medList.add(med);
+            }
+
+        }
+        return medList;
+    }
+
 }
