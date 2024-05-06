@@ -10,7 +10,12 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class GetMedRes {
+
     private String name;
+
     private LocalDate start_date;
+
     private LocalDate end_date;
+
+    private String imgUrl;
 }

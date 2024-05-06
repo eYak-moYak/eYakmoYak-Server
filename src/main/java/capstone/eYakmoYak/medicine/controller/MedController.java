@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Medicine", description = "복약 API")
@@ -36,7 +37,7 @@ public class MedController {
      */
     @Operation(summary = "개별약 등록", description = "복용하는 개별 약을 등록합니다.")
     @PostMapping("/add/medicine")
-    public ResponseEntity<?> addMedicine(@RequestHeader("access") String token, @RequestBody AddMedReq request){
+    public ResponseEntity<?> addMedicine(@RequestHeader("access") String token, @RequestBody AddMedReq request) throws IOException {
         User user = medService.getUser(token);
         medService.addMedicine(user, request);
 
@@ -48,7 +49,7 @@ public class MedController {
      */
     @Operation(summary = "처방약 등록", description = "처방 받은 약의 리스트를 등록합니다.")
     @PostMapping("/add/prescription")
-    public ResponseEntity<?> addPrescription(@RequestHeader("access") String token, @RequestBody AddPreReq request){
+    public ResponseEntity<?> addPrescription(@RequestHeader("access") String token, @RequestBody AddPreReq request) throws IOException {
         User user = medService.getUser(token);
         medService.addPrescription(user, request);
 

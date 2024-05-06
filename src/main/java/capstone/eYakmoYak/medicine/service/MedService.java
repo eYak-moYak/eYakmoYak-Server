@@ -9,6 +9,7 @@ import capstone.eYakmoYak.medicine.dto.AddMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreReq;
 import capstone.eYakmoYak.medicine.dto.GetMedRes;
+import capstone.eYakmoYak.medicine.repository.MedicineRepository;
 import capstone.eYakmoYak.medicine.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class MedService {
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final MedicineRepository medicineRepository;
+    private final S3Service s3Service;
 
     @Value("${external.api.service-key}")
     private String serviceKey;
@@ -73,7 +77,7 @@ public class MedService {
         return user;
     }
 
-    public void addMedicine(User user, AddMedReq request){
+    public void addMedicine(User user, AddMedReq request) throws IOException {
         Prescription prescription  = Prescription.builder()
                 .user(user)
                 .start_date(request.getStart_date())
@@ -82,10 +86,16 @@ public class MedService {
 
         user.addPrescription(prescription);
 
+        // S3에 이미지 업로드
+        String name = request.getName();
+        String imgUrl = request.getImgUrl();
+        String s3ImageUrl = getS3UrlForMedicine(name, imgUrl);
+
         Medicine medicine = Medicine.builder()
                 .name(request.getName())
                 .dose_time(request.getDose_time())
                 .meal_time(request.getMeal_time())
+                .imgUrl(s3ImageUrl)
                 .build();
 
         prescription.addMedicine(medicine);
@@ -93,7 +103,7 @@ public class MedService {
         prescriptionRepository.save(prescription);
     }
 
-    public void addPrescription(User user, AddPreReq request){
+    public void addPrescription(User user, AddPreReq request) throws IOException {
         Prescription prescription  = Prescription.builder()
                 .user(user)
                 .pre_name(request.getPre_name())
@@ -107,10 +117,16 @@ public class MedService {
         user.addPrescription(prescription);
 
         for(AddPreMedReq medicineRequest : request.getMedicines()){
+
+            String name = medicineRequest.getName();
+            String imgUrl = medicineRequest.getImgUrl();
+            String s3ImageUrl = getS3UrlForMedicine(name, imgUrl);
+
             Medicine medicine = new Medicine();
             medicine.setName(medicineRequest.getName());
             medicine.setDose_time(medicineRequest.getDose_time());
             medicine.setMeal_time(medicine.getMeal_time());
+            medicine.setImgUrl(s3ImageUrl);
             prescription.addMedicine(medicine);
         }
 
@@ -130,12 +146,30 @@ public class MedService {
                         .name(medicine.getName())
                         .start_date(prescription.getStart_date())
                         .end_date(prescription.getEnd_date())
+                        .imgUrl(medicine.getImgUrl())
                         .build();
                 medList.add(med);
             }
 
         }
         return medList;
+    }
+
+    public String getS3UrlForMedicine(String name, String imgUrl) throws IOException {
+
+        List<Medicine> existingMedicine = medicineRepository.findByName(name);
+
+        if (!existingMedicine.isEmpty()) {
+            // 동일한 이름의 약이 존재하면 해당 S3 URL 재사용
+            return existingMedicine.get(0).getImgUrl();
+        }
+
+        // 이미지 URL이 유효한 경우에만 S3에 업로드
+        if (imgUrl != null) {
+            return s3Service.uploadImage(imgUrl, "medicine-images");  // S3에 업로드 및 URL 반환
+        }
+
+        return "No Image";  // 이미지가 없는 경우 기본값
     }
 
 }

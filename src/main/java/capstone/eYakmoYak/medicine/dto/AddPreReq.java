@@ -7,6 +7,7 @@ import java.util.List;
 
 @Getter
 public class AddPreReq {
+
     private String pre_name;
 
     private String hospital;

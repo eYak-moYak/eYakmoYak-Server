@@ -32,6 +32,8 @@ public class Medicine {
 
     private int meal_time;
 
+    private String imgUrl;
+
     @UpdateTimestamp
     private LocalDateTime updated_at;
 
