@@ -1,4 +1,4 @@
-package capstone.eYakmoYak.medicine.config;
+package capstone.eYakmoYak.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

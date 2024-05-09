@@ -1,4 +1,4 @@
-package capstone.eYakmoYak.medicine.config;
+package capstone.eYakmoYak.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
