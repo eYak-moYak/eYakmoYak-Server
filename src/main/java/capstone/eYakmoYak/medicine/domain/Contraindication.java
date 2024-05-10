@@ -19,7 +19,7 @@ public class Contraindication {
     private String med_a;
 
     @Column(name = "med_b")
-    private int med_b;
+    private String med_b;
 
     @Column(name = "reason")
     private String reason;
