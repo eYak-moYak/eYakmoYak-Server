@@ -7,10 +7,10 @@ on:
 
 # 본인이 설정한 값을 여기서 채워넣는다.
 env:
-  AWS_REGION: us-east-1 #리전
-  S3_BUCKET_NAME: test-bucket #버킷 이름
-  CODE_DEPLOY_APPLICATION_NAME: test-app #CodeDeploy 애플리케이션 이름
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: test-deployment-group #CodeDeploy 배포 그룹 이름
+  AWS_REGION: ap-northeast-2 #리전
+  S3_BUCKET_NAME: eyakmoyak-s3 #버킷 이름
+  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app #CodeDeploy 애플리케이션 이름
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group #CodeDeploy 배포 그룹 이름
 
 permissions:
   contents: read
