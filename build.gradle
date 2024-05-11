@@ -21,10 +21,6 @@ repositories {
 	mavenCentral()
 }
 
-jar {
-	enabled = false
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -43,9 +39,5 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
-	implementation 'io.swagger:swagger-annotations:1.6.9'
-	implementation 'org.springframework:spring-webmvc:5.3.14'
-
 }
 
