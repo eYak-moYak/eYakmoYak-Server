@@ -70,6 +70,6 @@ public class MedController {
 
     @GetMapping("/")
     public String test(){
-        return "ok";
+        return "change";
     }
 }
