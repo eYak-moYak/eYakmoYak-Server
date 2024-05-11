@@ -68,7 +68,7 @@ public class MedController {
         return medService.getMedicineList(userId);
     }
 
-    @GetMapping("/get")
+    @GetMapping("/")
     public String test(){
         return "ok";
     }
