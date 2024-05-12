@@ -68,8 +68,8 @@ public class JWTService {
         refreshRepository.deleteByRefresh(refresh);
         loginUtil.addRefreshEntity(username, newRefresh, 86400000L);
 
-        System.out.println("newAccess = " + newAccess);
-        System.out.println("newRefresh = " + newRefresh);
+//        System.out.println("newAccess = " + newAccess);
+//        System.out.println("newRefresh = " + newRefresh);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
