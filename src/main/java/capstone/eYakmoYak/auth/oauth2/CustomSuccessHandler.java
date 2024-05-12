@@ -42,8 +42,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(utils.createCookie("refresh", refresh, 60*60*60*60, "/"));
         response.setStatus(HttpStatus.OK.value());
 
-        System.out.println("refresh = " + refresh);
-        System.out.println("access = " + access);
+//        System.out.println("refresh = " + refresh);
+//        System.out.println("access = " + access);
     }
 
 
