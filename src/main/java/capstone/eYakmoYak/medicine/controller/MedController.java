@@ -68,4 +68,14 @@ public class MedController {
         return medService.getMedicineList(userId);
     }
 
+    @GetMapping("/login/oauth2/code/kakao")
+    public String KloginTest(){
+        return "kakao success";
+    }
+
+    @GetMapping("/login/oauth2/code/naver")
+    public String NloginTest(){
+        return "naver success";
+    }
+
 }
