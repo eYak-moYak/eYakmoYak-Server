@@ -3,6 +3,7 @@ import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.jwt.JWTUtil;
 import capstone.eYakmoYak.auth.util.LoginUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refresh = jwtUtil.createJwt("refresh", username, 86400000L);
         //Refresh 토큰 저장
         utils.addRefreshEntity(username, refresh, 86400000L);
-        response.setHeader("access", access);
-        response.addCookie(utils.createCookie("refresh", refresh, 60*60*60*60, "/"));
-        response.setStatus(HttpStatus.OK.value());
 
-//        System.out.println("refresh = " + refresh);
-//        System.out.println("access = " + access);
+        // Refresh 토큰을 쿠키로 설정
+        Cookie refreshToken = new Cookie("refresh", refresh);
+        refreshToken.setMaxAge(60 * 60 * 60 * 60); // 60 days
+        refreshToken.setSecure(true); // HTTPS에서만 전송
+        refreshToken.setHttpOnly(true); // 클라이언트에서 접근할 수 없도록 설정
+        refreshToken.setPath("/"); // 경로 설정
+        response.addCookie(refreshToken);
+
+        // 액세스 토큰을 URL에 포함하여 리디렉트
+        response.setStatus(HttpStatus.OK.value());
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect?access=" + access);
 
     }
 
