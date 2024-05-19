@@ -41,21 +41,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.setHeader("access", access);
         Cookie refreshToken = utils.createCookie("refresh", refresh, 60*60*60*60, "/");
-        refreshToken.setSecure(true);
-        refreshToken.setHttpOnly(true);
-        refreshToken.setPath("/");
         response.addCookie(refreshToken);
-
-        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None",
-                refreshToken.getName(),
-                refreshToken.getValue(),
-                refreshToken.getMaxAge(),
-                refreshToken.getPath());
-        response.setHeader("Set-Cookie", cookieHeader);
 
         response.setStatus(HttpStatus.OK.value());
 
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect?access=" + access);
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect?access=" + access + "&refresh=" + refresh);
 //        System.out.println("refresh = " + refresh);
 //        System.out.println("access = " + access);
     }
