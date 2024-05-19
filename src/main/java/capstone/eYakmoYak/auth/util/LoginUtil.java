@@ -20,6 +20,7 @@ public class LoginUtil {
         if (!path.isEmpty()) {
             cookie.setPath(path);
         }
+        cookie.setHttpOnly(false);
 
         return cookie;
     }
