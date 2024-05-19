@@ -4,7 +4,6 @@ import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.jwt.JWTUtil;
 import capstone.eYakmoYak.auth.util.LoginUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,55 +11,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTUtil jwtUtil;
-
     private final LoginUtil utils;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        // 유저 정보
-        //OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
-
         String username = customUserDetails.getUsername();
 
-        // 토큰 생성
         String access = jwtUtil.createJwt("access", username, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, 86400000L);
 
-        //Refresh 토큰 저장
         utils.addRefreshEntity(username, refresh, 86400000L);
 
-        response.setHeader("access", access);
-        Cookie refreshToken = utils.createCookie("refresh", refresh, 60*60*60*60, "/");
-        refreshToken.setSecure(true); // HTTPS에서만 전송
-        refreshToken.setHttpOnly(true); // 클라이언트에서 접근할 수 없도록 설정
-        refreshToken.setPath("/"); // 경로 설정
-        refreshToken.setDomain("localhost"); // 도메인 설정
-        response.addCookie(refreshToken);
-
-        // 직접 SameSite=None; Secure 설정
-        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None",
-                refreshToken.getName(),
-                refreshToken.getValue(),
-                refreshToken.getMaxAge(),
-                refreshToken.getPath());
-        response.addHeader("Set-Cookie", cookieHeader);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access", access);
+        tokens.put("refresh", refresh);
 
         response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json");
+        new ObjectMapper().writeValue(response.getWriter(), tokens);
 
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect?access=" + access);
-//        System.out.println("refresh = " + refresh);
-//        System.out.println("access = " + access);
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect");
     }
-
-
 }
