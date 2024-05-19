@@ -91,6 +91,7 @@ public class SecurityConfig {
                         .requestMatchers("my").hasRole("USER")
                         .requestMatchers("/get/medicineInfo").permitAll()
                         .requestMatchers("/reissue").permitAll()
+                        .requestMatchers("/check-refresh-token").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS

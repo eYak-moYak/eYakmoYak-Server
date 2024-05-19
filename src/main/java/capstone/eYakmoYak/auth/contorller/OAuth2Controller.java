@@ -21,6 +21,6 @@ public class OAuth2Controller {
                 }
             }
         }
-        return null;
+        return "NO refresh token found";
     }
 }
