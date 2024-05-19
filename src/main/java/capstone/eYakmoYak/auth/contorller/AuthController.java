@@ -3,11 +3,13 @@ package capstone.eYakmoYak.auth.contorller;
 import capstone.eYakmoYak.auth.jwt.JWTService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,5 +29,22 @@ public class AuthController {
     public ResponseEntity<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
 
         return jwtService.reissueToken(request, response);
+    }
+
+    /**
+     * refresh Token 전달
+     */
+    @Operation(summary = "refresh Token", description = "refresh Token을 전달합니다.")
+    @GetMapping("/check-refresh-token")
+    public String checkRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refresh".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return "NO refresh token found";
     }
 }
