@@ -35,7 +35,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshToken.setSecure(true); // HTTPS에서만 전송
         refreshToken.setHttpOnly(true); // 클라이언트에서 접근할 수 없도록 설정
         refreshToken.setPath("/"); // 경로 설정
-        response.addCookie(refreshToken);
+        refreshToken.setDomain("localhost"); // 도메인 설정
+
+        // SameSite=None으로 설정
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None",
+                refreshToken.getName(),
+                refreshToken.getValue(),
+                refreshToken.getMaxAge(),
+                refreshToken.getPath());
+        response.addHeader("Set-Cookie", cookieHeader);
 
         // 액세스 토큰을 URL에 포함하여 리디렉트
         response.setStatus(HttpStatus.OK.value());
