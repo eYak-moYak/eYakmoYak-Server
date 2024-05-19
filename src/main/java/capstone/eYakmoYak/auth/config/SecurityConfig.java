@@ -51,11 +51,9 @@ public class SecurityConfig {
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
+                        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
                         configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization", "access"));
-
+                        configuration.setMaxAge(3600L);
 
                         return configuration;
                     }
