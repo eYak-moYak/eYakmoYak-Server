@@ -4,6 +4,7 @@ import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.jwt.JWTUtil;
 import capstone.eYakmoYak.auth.util.LoginUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         utils.addRefreshEntity(username, refresh, 86400000L);
 
         response.setHeader("access", access);
-        response.addCookie(utils.createCookie("refresh", refresh, 60*60*60*60, "/"));
+        Cookie refreshToken = utils.createCookie("refresh", refresh, 60*60*60*60, "/");
+        refreshToken.setHttpOnly(false);
+        response.addCookie(refreshToken);
+
         response.setStatus(HttpStatus.OK.value());
 
         getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/redirect?access=" + access);
