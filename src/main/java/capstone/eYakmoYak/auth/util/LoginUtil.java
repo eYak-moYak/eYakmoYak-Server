@@ -21,7 +21,7 @@ public class LoginUtil {
             cookie.setPath(path);
         }
         //cookie.setSecure(true);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
 
         return cookie;
     }
