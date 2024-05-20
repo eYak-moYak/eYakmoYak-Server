@@ -3,6 +3,7 @@ package capstone.eYakmoYak.medicine.controller;
 import capstone.eYakmoYak.auth.domain.User;
 import capstone.eYakmoYak.medicine.dto.AddMedReq;
 import capstone.eYakmoYak.medicine.dto.AddPreReq;
+import capstone.eYakmoYak.medicine.dto.GetInfoList;
 import capstone.eYakmoYak.medicine.dto.GetMedRes;
 import capstone.eYakmoYak.medicine.service.MedService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,14 +69,18 @@ public class MedController {
         return medService.getMedicineList(userId);
     }
 
-    @GetMapping("/login/oauth2/code/kakao")
-    public String KloginTest(){
-        return "kakao success";
+    /**
+     * 유저의 처방전 & 개별약
+     */
+    @Operation(summary = "유저의 처방전, 개별약 조회", description = "유저의 처방전과 개별약 리스트를 조회합니다.")
+    @GetMapping("/get/premedList")
+    public GetInfoList getUserPreAndMed(@RequestHeader("access") String token){
+        User user = medService.getUser(token);
+        Long userId = user.getId();
+
+        return medService.getUserPreAndMed(userId);
     }
 
-    @GetMapping("/login/oauth2/code/naver")
-    public String NloginTest(){
-        return "naver success";
-    }
+
 
 }

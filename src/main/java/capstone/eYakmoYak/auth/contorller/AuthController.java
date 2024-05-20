@@ -24,7 +24,7 @@ public class AuthController {
     /**
      * accessToken 재발급
      */
-    @Operation(summary = "Access Token 재발급")
+    @Operation(summary = "Access Token 재발급", description = "Cookie에 refresh=토큰값 으로 넣어주면 Access Token을 재발급합니다.")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissueToken(HttpServletRequest request, HttpServletResponse response) {
 

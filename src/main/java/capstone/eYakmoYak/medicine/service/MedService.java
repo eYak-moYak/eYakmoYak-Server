@@ -5,10 +5,7 @@ import capstone.eYakmoYak.auth.jwt.JWTUtil;
 import capstone.eYakmoYak.auth.repository.UserRepository;
 import capstone.eYakmoYak.medicine.domain.Medicine;
 import capstone.eYakmoYak.medicine.domain.Prescription;
-import capstone.eYakmoYak.medicine.dto.AddMedReq;
-import capstone.eYakmoYak.medicine.dto.AddPreMedReq;
-import capstone.eYakmoYak.medicine.dto.AddPreReq;
-import capstone.eYakmoYak.medicine.dto.GetMedRes;
+import capstone.eYakmoYak.medicine.dto.*;
 import capstone.eYakmoYak.medicine.repository.MedicineRepository;
 import capstone.eYakmoYak.medicine.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ch.qos.logback.classic.spi.ThrowableProxyVO.build;
 
 @Service
 @RequiredArgsConstructor
@@ -170,6 +169,45 @@ public class MedService {
         }
 
         return "No Image";  // 이미지가 없는 경우 기본값
+    }
+
+    public GetInfoList getUserPreAndMed(Long userId){
+        List<Prescription> prescriptions = prescriptionRepository.findByUser_Id(userId);
+
+        List<GetMedList> medList = new ArrayList<>();
+        List<GetPreList> preList = new ArrayList<>();
+
+        for(Prescription prescription : prescriptions){
+            if(prescription.getHospital() == null){
+                // 병원명이 null인 경우
+                for(Medicine medicine : prescription.getMedicines()){
+                    GetMedList med = GetMedList.builder()
+                            .name(medicine.getName())
+                            .start_date(prescription.getStart_date())
+                            .end_date(prescription.getEnd_date())
+                            .dose_time(medicine.getDose_time())
+                            .meal_time(medicine.getMeal_time())
+                    .build();
+                    medList.add(med);
+                }
+            } else {
+                // 병원명이 있는 경우 처방전 목록을 추가
+                GetPreList pre = GetPreList.builder()
+                        .pre_name(prescription.getPre_name())
+                        .pre_date(prescription.getPre_date())
+                        .hospital(prescription.getHospital())
+                        .pharmacy(prescription.getPharmacy())
+                        .countMedicine(prescription.getMedicines().size())
+                        .build();
+                preList.add(pre);
+            }
+        }
+        GetInfoList getInfoList = GetInfoList.builder()
+                .medicines(medList)
+                .prescriptions(preList)
+                .build();
+
+        return getInfoList;
     }
 
 }
