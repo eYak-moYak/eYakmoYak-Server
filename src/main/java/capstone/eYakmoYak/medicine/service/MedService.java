@@ -20,8 +20,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.qos.logback.classic.spi.ThrowableProxyVO.build;
-
 @Service
 @RequiredArgsConstructor
 public class MedService {
@@ -208,6 +206,33 @@ public class MedService {
                 .build();
 
         return getInfoList;
+    }
+
+    public GetPrescription getPrescription(Long preId){
+        Prescription prescription = prescriptionRepository.findById(preId).get();
+
+        List<GetMedList> medList = new ArrayList<>();
+
+        for(Medicine medicine : prescription.getMedicines()){
+            GetMedList med = GetMedList.builder()
+                    .name(medicine.getName())
+                    .start_date(prescription.getStart_date())
+                    .end_date(prescription.getEnd_date())
+                    .dose_time(medicine.getDose_time())
+                    .meal_time(medicine.getMeal_time())
+                    .build();
+            medList.add(med);
+        }
+
+        GetPrescription getPreMedList = GetPrescription.builder()
+                .pre_name(prescription.getPre_name())
+                .pre_date(prescription.getPre_date())
+                .hospital(prescription.getHospital())
+                .pharmacy(prescription.getPharmacy())
+                .medicines(medList)
+                .build();
+
+        return getPreMedList;
     }
 
 }

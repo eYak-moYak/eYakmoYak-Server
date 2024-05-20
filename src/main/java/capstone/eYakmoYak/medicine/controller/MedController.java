@@ -1,10 +1,7 @@
 package capstone.eYakmoYak.medicine.controller;
 
 import capstone.eYakmoYak.auth.domain.User;
-import capstone.eYakmoYak.medicine.dto.AddMedReq;
-import capstone.eYakmoYak.medicine.dto.AddPreReq;
-import capstone.eYakmoYak.medicine.dto.GetInfoList;
-import capstone.eYakmoYak.medicine.dto.GetMedRes;
+import capstone.eYakmoYak.medicine.dto.*;
 import capstone.eYakmoYak.medicine.service.MedService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,6 +78,13 @@ public class MedController {
         return medService.getUserPreAndMed(userId);
     }
 
-
+    /**
+     * 하나의 처방전 조회
+     */
+    @Operation(summary = "하나의 처방전 조회", description = "처방전 정보 및 약 목록을 조회합니다.")
+    @GetMapping("/get/prescription/{preId}")
+    public GetPrescription getPrescription(@PathVariable("preId") Long id){
+        return medService.getPrescription(id);
+    }
 
 }

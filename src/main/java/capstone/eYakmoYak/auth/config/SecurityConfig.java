@@ -92,6 +92,7 @@ public class SecurityConfig {
                         .requestMatchers("/get/medicineInfo").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/check-refresh-token").permitAll()
+                        .requestMatchers("/get/prescription/{preId}").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
