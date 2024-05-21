@@ -2,8 +2,6 @@ package capstone.eYakmoYak.auth.jwt;
 
 import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.dto.UserDTO;
-import capstone.eYakmoYak.auth.response.AuthenticationErrorCode;
-import capstone.eYakmoYak.auth.response.CustomAuthenticationException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,11 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if(authorization == null || !authorization.startsWith("Bearer ")){
-            try {
-                throw new CustomAuthenticationException(AuthenticationErrorCode.EMPTY_AUTHENTICATION);
-            } catch (AuthenticationException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println("no access token");
         }
 
         String accessToken = authorization.split(" ")[1];
