@@ -2,11 +2,15 @@ package capstone.eYakmoYak.auth.jwt;
 
 import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.dto.UserDTO;
+import capstone.eYakmoYak.auth.response.AuthenticationErrorCode;
+import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.http.auth.AuthenticationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,16 +32,18 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 헤더에서 access키에 담긴 토큰을 꺼냄
-        String accessToken = request.getHeader("access");
 
-        // 토큰이 없다면 다음 필터로 넘김
-        if (accessToken == null) {
+        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            filterChain.doFilter(request, response);
-
-            return;
+        if(authorization == null || !authorization.startsWith("Bearer ")){
+            try {
+                throw new AuthenticationException(AuthenticationErrorCode.EMPTY_AUTHENTICATION.getMessage());
+            } catch (AuthenticationException e) {
+                throw new RuntimeException(e);
+            }
         }
+
+        String accessToken = authorization.split(" ")[1];
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
