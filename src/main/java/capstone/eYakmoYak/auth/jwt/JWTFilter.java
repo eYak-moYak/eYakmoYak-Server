@@ -2,6 +2,8 @@ package capstone.eYakmoYak.auth.jwt;
 
 import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.dto.UserDTO;
+import capstone.eYakmoYak.auth.response.AuthenticationErrorCode;
+import capstone.eYakmoYak.auth.response.CustomAuthenticationException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,11 +33,17 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = request.getHeader("access");
+        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(accessToken == null){
-            filterChain.doFilter(request, response);
+        if(authorization == null || !authorization.startsWith("Bearer ")){
+            try {
+                throw new CustomAuthenticationException(AuthenticationErrorCode.EMPTY_AUTHENTICATION);
+            } catch (AuthenticationException e) {
+                throw new RuntimeException(e);
+            }
         }
+
+        String accessToken = authorization.split(" ")[1];
 
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
