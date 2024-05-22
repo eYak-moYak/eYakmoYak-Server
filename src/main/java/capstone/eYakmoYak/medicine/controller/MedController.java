@@ -35,7 +35,7 @@ public class MedController {
      */
     @Operation(summary = "개별약 등록", description = "복용하는 개별 약을 등록합니다.")
     @PostMapping("/add/medicine")
-    public ResponseEntity<?> addMedicine(@RequestHeader("access") String token, @RequestBody AddMedReq request) throws IOException {
+    public ResponseEntity<?> addMedicine(@RequestHeader("Authorization") String token, @RequestBody AddMedReq request) throws IOException {
         User user = medService.getUser(token);
         medService.addMedicine(user, request);
 
@@ -47,7 +47,7 @@ public class MedController {
      */
     @Operation(summary = "처방약 등록", description = "처방 받은 약의 리스트를 등록합니다.")
     @PostMapping("/add/prescription")
-    public ResponseEntity<?> addPrescription(@RequestHeader("access") String token, @RequestBody AddPreReq request) throws IOException {
+    public ResponseEntity<?> addPrescription(@RequestHeader("Authorization") String token, @RequestBody AddPreReq request) throws IOException {
         User user = medService.getUser(token);
         medService.addPrescription(user, request);
 
@@ -59,7 +59,7 @@ public class MedController {
      */
     @Operation(summary = "복용 중인 약품 조회", description = "복용 중인 약의 리스트를 조회합니다.")
     @GetMapping("/get/medicines")
-    public List<GetMedRes> getMedicines(@RequestHeader("access") String token){
+    public List<GetMedRes> getMedicines(@RequestHeader("Authorization") String token){
         User user = medService.getUser(token);
         Long userId = user.getId();
 
@@ -71,7 +71,7 @@ public class MedController {
      */
     @Operation(summary = "유저의 처방전, 개별약 조회", description = "유저의 처방전과 개별약 리스트를 조회합니다.")
     @GetMapping("/get/premedList")
-    public GetInfoList getUserPreAndMed(@RequestHeader("access") String token){
+    public GetInfoList getUserPreAndMed(@RequestHeader("Authorization") String token){
         User user = medService.getUser(token);
         Long userId = user.getId();
 
