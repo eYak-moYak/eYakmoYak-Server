@@ -30,18 +30,20 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String accessToken = request.getHeader("access");
 
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            response.setStatus(SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            PrintWriter writer = response.getWriter();
-            writer.write("{\"error\": \"Unauthorized: Access token is missing or invalid\"}");
-            writer.flush();
-            return;
-        }
-
-        String accessToken = authorization.split(" ")[1];
+//        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+//
+//        if (authorization == null || !authorization.startsWith("Bearer ")) {
+//            response.setStatus(SC_UNAUTHORIZED);
+//            response.setContentType("application/json");
+//            PrintWriter writer = response.getWriter();
+//            writer.write("{\"error\": \"Unauthorized: Access token is missing or invalid\"}");
+//            writer.flush();
+//            return;
+//        }
+//
+//        String accessToken = authorization.split(" ")[1];
         System.out.println("accessToken = " + accessToken);
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
