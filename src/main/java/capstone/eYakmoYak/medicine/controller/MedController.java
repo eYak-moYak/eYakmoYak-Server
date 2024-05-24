@@ -36,6 +36,7 @@ public class MedController {
     @Operation(summary = "개별약 등록", description = "복용하는 개별 약을 등록합니다.")
     @PostMapping("/add/medicine")
     public ResponseEntity<?> addMedicine(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddMedReq request) throws IOException {
+
         String token = authorizationHeader.substring(7);
 
         User user = medService.getUser(token);
@@ -50,6 +51,7 @@ public class MedController {
     @Operation(summary = "처방약 등록", description = "처방 받은 약의 리스트를 등록합니다.")
     @PostMapping("/add/prescription")
     public ResponseEntity<?> addPrescription(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddPreReq request) throws IOException {
+
         String token = authorizationHeader.substring(7);
 
         User user = medService.getUser(token);
@@ -79,6 +81,7 @@ public class MedController {
     @Operation(summary = "유저의 처방전, 개별약 조회", description = "유저의 처방전과 개별약 리스트를 조회합니다.")
     @GetMapping("/get/premedList")
     public GetInfoList getUserPreAndMed(@RequestHeader("Authorization") String authorizationHeader){
+
         String token = authorizationHeader.substring(7);
 
         User user = medService.getUser(token);
