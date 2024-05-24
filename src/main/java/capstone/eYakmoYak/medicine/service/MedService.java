@@ -67,7 +67,7 @@ public class MedService {
      */
     public User getUser(String token){
         String username = jwtUtil.getUsername(token);
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).get();
         if(user == null){
             throw new RuntimeException("로그인이 필요한 서비스 입니다.");
         }
