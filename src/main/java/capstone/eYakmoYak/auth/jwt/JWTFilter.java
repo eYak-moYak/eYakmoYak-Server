@@ -1,44 +1,40 @@
 package capstone.eYakmoYak.auth.jwt;
 
-import capstone.eYakmoYak.auth.domain.User;
 import capstone.eYakmoYak.auth.dto.CustomOAuth2User;
 import capstone.eYakmoYak.auth.dto.UserDTO;
-import capstone.eYakmoYak.auth.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Optional;
+import java.util.Enumeration;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
-@Slf4j
-@RequiredArgsConstructor
-@Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-    private final UserRepository userRepository;
+
+    public JWTFilter(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
+
+        try{
             String accessToken = getAccessTokenFromHeader(request);
-            if (accessToken == null) {
+            if(accessToken == null){
                 throw new JwtException("Access token is null");
             }
 
@@ -55,8 +51,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // username 값을 획득
             String username = jwtUtil.getUsername(accessToken);
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
@@ -64,8 +58,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
             Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
-        } catch (JwtException | UsernameNotFoundException ex) {
-            log.info("Failed to authorize/authenticate with JWT due to " + ex.getMessage());
+        } catch (JwtException ex){
+            logger.info("Failed to authorize/authenticate with JWT due to " + ex.getMessage());
         }
 
         filterChain.doFilter(request, response);
