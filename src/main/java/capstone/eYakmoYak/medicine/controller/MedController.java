@@ -76,6 +76,17 @@ public class MedController {
     }
 
     /**
+     * 병용금기 페이지 - 병용 금기 조회
+     */
+    @Operation(summary = "병용 금기 조회", description = "병용 금기 리스트를 조회합니다.")
+    @GetMapping("/get/cont/medicines")
+    @ResponseBody
+    public List<GetContRes> getContraindication(@RequestParam("medicines") List<String> medicines, @RequestParam("name") String name) throws IOException {
+
+        return medService.getContList(medicines, name);
+    }
+
+    /**
      * 유저의 처방전 & 개별약
      */
     @Operation(summary = "유저의 처방전, 개별약 조회", description = "유저의 처방전과 개별약 리스트를 조회합니다.")
