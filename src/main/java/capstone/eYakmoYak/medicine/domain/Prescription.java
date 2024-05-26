@@ -38,13 +38,10 @@ public class Prescription {
 
     private String pharmacy;
 
-    @CreationTimestamp
     private LocalDate pre_date;
 
-    @CreationTimestamp
     private LocalDate start_date;
 
-    @CreationTimestamp
     private LocalDate end_date;
 
     @UpdateTimestamp
