@@ -25,7 +25,7 @@ public class Medicine {
     @JoinColumn(name = "pre_id")
     private Prescription prescription;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String name;
 
     private String dose_time;

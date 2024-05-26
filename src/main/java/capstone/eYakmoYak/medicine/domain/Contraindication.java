@@ -7,6 +7,7 @@ import static jakarta.persistence.GenerationType.*;
 
 @Getter
 @Entity
+@Table(name = "Contraindication")
 public class Contraindication {
 
     @Id
