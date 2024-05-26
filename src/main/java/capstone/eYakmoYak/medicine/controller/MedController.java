@@ -80,9 +80,8 @@ public class MedController {
      */
     @Operation(summary = "병용 금기 조회", description = "병용 금기 리스트를 조회합니다.")
     @GetMapping("/get/cont/medicines")
-    @ResponseBody
-    public List<GetContRes> getContraindication(@RequestParam("medicines") List<String> medicines, @RequestParam("name") String name) throws IOException {
-
+    public List<GetContRes> getContraindication(@RequestParam("medicines") List<String> medicines,
+                                                @RequestParam("name") String name) {
         return medService.getContList(medicines, name);
     }
 
