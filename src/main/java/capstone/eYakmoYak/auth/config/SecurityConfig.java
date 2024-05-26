@@ -6,7 +6,6 @@ import capstone.eYakmoYak.auth.oauth2.CustomSuccessHandler;
 import capstone.eYakmoYak.auth.repository.RefreshRepository;
 import capstone.eYakmoYak.auth.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -90,6 +89,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("my").hasRole("USER")
                         .requestMatchers("/get/medicineInfo").permitAll()
+                        .requestMatchers("/get/cont/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/check-refresh-token").permitAll()
                         .requestMatchers("/get/prescription/{preId}").permitAll()

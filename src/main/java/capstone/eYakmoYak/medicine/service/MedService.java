@@ -3,11 +3,13 @@ package capstone.eYakmoYak.medicine.service;
 import capstone.eYakmoYak.auth.domain.User;
 import capstone.eYakmoYak.auth.jwt.JWTUtil;
 import capstone.eYakmoYak.auth.repository.UserRepository;
+import capstone.eYakmoYak.medicine.domain.Contraindication;
 import capstone.eYakmoYak.medicine.domain.Medicine;
 import capstone.eYakmoYak.medicine.domain.Prescription;
 import capstone.eYakmoYak.medicine.dto.*;
 import capstone.eYakmoYak.medicine.repository.MedicineRepository;
 import capstone.eYakmoYak.medicine.repository.PrescriptionRepository;
+import capstone.eYakmoYak.medicine.repository.ContraindicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,16 +21,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class MedService {
-
     private final WebClient webClient;
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final MedicineRepository medicineRepository;
+    private final ContraindicationRepository contraindicationRepository;
     private final S3Service s3Service;
 
     @Value("${external.api.service-key}")
@@ -152,6 +156,42 @@ public class MedService {
         return medList;
     }
 
+    public List<GetContRes> getContList(List<String> medicines, String name) {
+        // 선택한 약품 리스트, 조회할 약품명 가져오기
+
+        List<GetContRes> contList = new ArrayList<>();
+
+        name = strProcess(name);
+
+        List<Contraindication> contListA = contraindicationRepository.findByMedAContaining(name);
+        for (Contraindication cont : contListA) {
+            for (String med : medicines) {
+                if (cont.getMedB().contains(strProcess(med))) {
+                    GetContRes res = GetContRes.builder()
+                            .name(cont.getMedB())
+                            .reason(cont.getReason())
+                            .build();
+                    contList.add(res);
+                }
+            }
+        }
+
+        List<Contraindication> contListB = contraindicationRepository.findByMedBContaining(name);
+        for (Contraindication cont : contListB) {
+            for (String med : medicines) {
+                if (cont.getMedA().contains(strProcess(med))) {
+                    GetContRes res = GetContRes.builder()
+                            .name(cont.getMedA())
+                            .reason(cont.getReason())
+                            .build();
+                    contList.add(res);
+                }
+            }
+        }
+
+        return contList;
+    }
+
     public String getS3UrlForMedicine(String name, String imgUrl) throws IOException {
 
         List<Medicine> existingMedicine = medicineRepository.findByName(name);
@@ -168,7 +208,6 @@ public class MedService {
 
         return "No Image";  // 이미지가 없는 경우 기본값
     }
-
     public GetInfoList getUserPreAndMed(Long userId){
         List<Prescription> prescriptions = prescriptionRepository.findByUser_Id(userId);
 
@@ -235,4 +274,35 @@ public class MedService {
         return getPreMedList;
     }
 
+    public String strProcess(String name) {
+        String strNumber = FindFirstNumber(name);
+        if (strNumber != null) {
+            name = strNumber;
+        }
+        String strParen = FindParen(name);
+        if (strParen != null) {
+            name = strParen;
+        }
+        return name;
+    }
+
+    public String FindFirstNumber(String name) {
+        Pattern pattern = Pattern.compile("[/\\d]+");
+        Matcher matcher = pattern.matcher(name);
+        if (matcher.find()) {
+            return name.substring(0, matcher.end());
+        }
+        else {
+            return null;
+        }
+    }
+    public String FindParen(String name) {
+        int parenIdx = name.indexOf('(');
+        if (parenIdx == -1) {
+            return null;
+        }
+        else {
+            return name.substring(0, parenIdx);
+        }
+    }
 }

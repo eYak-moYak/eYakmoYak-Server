@@ -7,7 +7,6 @@ import static jakarta.persistence.GenerationType.*;
 
 @Getter
 @Entity
-@Table(name = "contraindication")
 public class Contraindication {
 
     @Id
@@ -16,10 +15,10 @@ public class Contraindication {
     private Long id;
 
     @Column(name = "med_a")
-    private String med_a;
+    private String medA;
 
     @Column(name = "med_b")
-    private String med_b;
+    private String medB;
 
     @Column(name = "reason")
     private String reason;
