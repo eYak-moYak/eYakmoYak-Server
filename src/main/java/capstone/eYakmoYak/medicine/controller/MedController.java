@@ -35,14 +35,13 @@ public class MedController {
      */
     @Operation(summary = "개별약 등록", description = "복용하는 개별 약을 등록합니다.")
     @PostMapping("/add/medicine")
-    public ResponseEntity<?> addMedicine(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddMedReq request) throws IOException {
+    public Long addMedicine(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddMedReq request) throws IOException {
 
         String token = authorizationHeader.substring(7);
 
         User user = medService.getUser(token);
-        medService.addMedicine(user, request);
 
-        return ResponseEntity.ok("Medicine created successfully");
+        return medService.addMedicine(user, request);
     }
 
     /**
@@ -50,14 +49,13 @@ public class MedController {
      */
     @Operation(summary = "처방약 등록", description = "처방 받은 약의 리스트를 등록합니다.")
     @PostMapping("/add/prescription")
-    public ResponseEntity<?> addPrescription(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddPreReq request) throws IOException {
+    public Long addPrescription(@RequestHeader("Authorization") String authorizationHeader, @RequestBody AddPreReq request) throws IOException {
 
         String token = authorizationHeader.substring(7);
 
         User user = medService.getUser(token);
-        medService.addPrescription(user, request);
 
-        return ResponseEntity.ok("Prescription and medicines created successfully");
+        return  medService.addPrescription(user, request);
     }
 
     /**

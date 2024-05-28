@@ -78,7 +78,7 @@ public class MedService {
         return user;
     }
 
-    public void addMedicine(User user, AddMedReq request) throws IOException {
+    public Long addMedicine(User user, AddMedReq request) throws IOException {
         Prescription prescription  = Prescription.builder()
                 .user(user)
                 .start_date(request.getStart_date())
@@ -102,9 +102,10 @@ public class MedService {
         prescription.addMedicine(medicine);
 
         prescriptionRepository.save(prescription);
+        return prescription.getId();
     }
 
-    public void addPrescription(User user, AddPreReq request) throws IOException {
+    public Long addPrescription(User user, AddPreReq request) throws IOException {
         Prescription prescription  = Prescription.builder()
                 .user(user)
                 .pre_name(request.getPre_name())
@@ -132,6 +133,7 @@ public class MedService {
         }
 
         prescriptionRepository.save(prescription);
+        return prescription.getId();
     }
 
     public List<GetMedRes> getMedicineList(Long userId) {
