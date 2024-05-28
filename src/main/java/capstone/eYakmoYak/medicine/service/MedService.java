@@ -220,6 +220,7 @@ public class MedService {
                 // 병원명이 null인 경우
                 for(Medicine medicine : prescription.getMedicines()){
                     GetMedList med = GetMedList.builder()
+                            .pre_id(prescription.getId())
                             .name(medicine.getName())
                             .start_date(prescription.getStart_date())
                             .end_date(prescription.getEnd_date())
@@ -231,6 +232,7 @@ public class MedService {
             } else {
                 // 병원명이 있는 경우 처방전 목록을 추가
                 GetPreList pre = GetPreList.builder()
+                        .pre_id(prescription.getId())
                         .pre_name(prescription.getPre_name())
                         .pre_date(prescription.getPre_date())
                         .hospital(prescription.getHospital())

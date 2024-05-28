@@ -10,6 +10,9 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class GetMedList {
+
+    private Long pre_id;
+
     private String name;
 
     private LocalDate start_date;

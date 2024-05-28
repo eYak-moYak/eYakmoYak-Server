@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 public class GetPreList {
 
+    private Long pre_id;
+
     private String pre_name;
 
     private LocalDate pre_date;
