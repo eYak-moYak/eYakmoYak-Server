@@ -160,10 +160,9 @@ public class MedService {
 
     public List<GetContRes> getContList(List<String> medicines, String name) {
         // 선택한 약품 리스트, 조회할 약품명 가져오기
+        name = strProcess(name);
 
         List<GetContRes> contList = new ArrayList<>();
-
-        name = strProcess(name);
 
         List<Contraindication> contListA = contraindicationRepository.findByMedAContaining(name);
         for (Contraindication cont : contListA) {
