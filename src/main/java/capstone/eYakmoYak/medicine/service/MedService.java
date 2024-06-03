@@ -203,7 +203,7 @@ public class MedService {
         }
 
         // 이미지 URL이 유효한 경우에만 S3에 업로드
-        if (imgUrl != null) {
+        if (imgUrl != null && !imgUrl.isEmpty()) {
             return s3Service.uploadImage(imgUrl, "medicine-images");  // S3에 업로드 및 URL 반환
         }
 
